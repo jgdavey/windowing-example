@@ -5,3 +5,13 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+require 'faker'
+require 'fabrication'
+
+lolcats = Category.find_or_create_by_name("LOLCats").id
+classic = Category.find_or_create_by_name("Classic").id
+
+25.times do
+  Fabricate(:cat_picture, category_id: [lolcats, classic].sample)
+end
