@@ -3,8 +3,15 @@ class CatPicture < ActiveRecord::Base
   belongs_to :category
 
   def self.cheapest_per_category
-    all.group_by(&:category_id).map do |category_id, subset|
-      subset.sort_by { |pic| [pic.price, pic.name] }.first
-    end.compact
+    find_by_sql <<-SQL
+      SELECT DISTINCT ON(category_id) cat_pictures.*
+      FROM cat_pictures
+      WHERE ((category_id, price) IN (
+        SELECT category_id, min(price)
+        FROM cat_pictures
+        GROUP BY category_id
+      ))
+      ORDER BY category_id ASC, cat_pictures.name ASC
+    SQL
   end
 end
