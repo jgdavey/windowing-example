@@ -3,15 +3,11 @@ class CatPicture < ActiveRecord::Base
   belongs_to :category
 
   def self.cheapest_per_category
-    find_by_sql <<-SQL
-      SELECT DISTINCT ON(category_id) cat_pictures.*
-      FROM cat_pictures
-      WHERE ((category_id, price) IN (
-        SELECT category_id, min(price)
-        FROM cat_pictures
-        GROUP BY category_id
-      ))
-      ORDER BY category_id ASC, cat_pictures.name ASC
-    SQL
+    where("(category_id, price) IN (#{category_id_and_lowest_price_sql})").select("DISTINCT ON(category_id) #{table_name}.*").order("category_id ASC, #{table_name}.name ASC")
+  end
+
+  private
+  def self.category_id_and_lowest_price_sql
+    scoped.select("category_id, min(price)").group(:category_id).to_sql
   end
 end

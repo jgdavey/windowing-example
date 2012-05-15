@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe CatPicture do
   describe '.cheapest_per_category' do
-    let!(:category2) { Fabricate(:category) }
     let!(:category1) { Fabricate(:category) }
+    let!(:category2) { Fabricate(:category) }
 
     it "returns a list, with only the cheapest for its category" do
       pic1 = Fabricate(:cat_picture, price: 8.5,  category_id: category1.id)
